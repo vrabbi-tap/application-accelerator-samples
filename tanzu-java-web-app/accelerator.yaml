@@ -15,7 +15,7 @@ accelerator:
     defaultValue: demo-app
     label: Name
     description: Provide a name for your new project
-    validationRegex: "^\\([A-Za-z0-9\\-\\/]+\\)$"
+    validationRegex: "^[A-Za-z0-9\\-]+$"
   - name: repositoryPrefix
     inputType: text
     label: Prefix for the container image repository
