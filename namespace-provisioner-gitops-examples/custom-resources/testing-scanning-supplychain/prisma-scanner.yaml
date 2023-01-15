@@ -1,0 +1,44 @@
+
+#@ load("@ytt:data", "data")
+#@ def in_list(key, list):
+#@  return hasattr(data.values.tap_values, key) and (data.values.tap_values[key] in list)
+#@ end
+#@ if/end in_list('supply_chain', ['testing_scanning']) and in_list('profile', ['full', 'build']):
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: #@ "prisma-scanner-{}".format(data.values.name)
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/create-strategy: fallback-on-update
+spec:
+  packageRef:
+    refName: grype.scanning.apps.tanzu.vmware.com
+    versionSelection:
+      constraints: "0.1.4-alpha.6"
+      prereleases: {}
+  serviceAccountName: tap-install-sa
+  values:
+  - secretRef:
+      name: #@ "prisma-scanner-" + data.values.name
+
+#@ def prisma_values():
+#@   prisma_values = {}
+#@   prisma_values["namespace"] = data.values.name
+#@   prisma_values["prisma"]["url"] = "https://europe-west3.cloud.twistlock.com/eu-158061"
+#@   prisma_values["prisma"]["basicAuth"]["name"] = "prisma-creds"
+#@   return prisma_values
+#@ end
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  #! name will be updated by the expansion template
+  name: #@ "prisma-scanner-{}".format(data.values.name)
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/create-strategy: fallback-on-update
+stringData:
+  values.yml: #@ yaml.encode(prisma_values())
+#@ end
