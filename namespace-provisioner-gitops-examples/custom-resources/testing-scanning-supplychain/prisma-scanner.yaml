@@ -9,7 +9,7 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: #@ "prisma-scanner-{}".format(data.values.name)
+  name: "grype-scanner-prisma"
   namespace: tap-install
   annotations:
     kapp.k14s.io/create-strategy: fallback-on-update
@@ -22,7 +22,7 @@ spec:
   serviceAccountName: tap-install-sa
   values:
   - secretRef:
-      name: #@ "prisma-scanner-" + data.values.name
+      name: #@ "grype-scanner-prisma-" + data.values.name
 
 #@ def prisma_values():
 #@   prisma_values = {}
@@ -38,7 +38,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   #! name will be updated by the expansion template
-  name: #@ "prisma-scanner-{}".format(data.values.name)
+  name: "grype-scanner-prisma"
   namespace: tap-install
   annotations:
     kapp.k14s.io/create-strategy: fallback-on-update
