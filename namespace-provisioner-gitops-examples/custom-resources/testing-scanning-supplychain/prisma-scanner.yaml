@@ -33,9 +33,9 @@ spec:
 #@   prisma_values["prisma"]["basicAuth"]["name"] = "prisma-creds"
 #@   prisma_values["metadataStore"] = {}
 #@   prisma_values["metadataStore"]["caSecret"] = {}
-#@   prisma_values["metadataStore"]["caSecret"]["importFromNamespace"] = None
+#@   prisma_values["metadataStore"]["caSecret"]["importFromNamespace"] = ""
 #@   prisma_values["metadataStore"]["authSecret"] = {}
-#@   prisma_values["metadataStore"]["authSecret"]["importFromNamespace"] = None
+#@   prisma_values["metadataStore"]["authSecret"]["importFromNamespace"] = ""
 
 #@   return prisma_values
 #@ end
