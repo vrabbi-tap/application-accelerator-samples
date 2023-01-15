@@ -15,7 +15,7 @@ metadata:
     kapp.k14s.io/create-strategy: fallback-on-update
 spec:
   packageRef:
-    refName: grype.scanning.apps.tanzu.vmware.com
+    refName: prisma.scanning.apps.tanzu.vmware.com
     versionSelection:
       constraints: "0.1.4-alpha.6"
       prereleases: {}
