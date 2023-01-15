@@ -17,7 +17,7 @@ spec:
   packageRef:
     refName: prisma.scanning.apps.tanzu.vmware.com
     versionSelection:
-      constraints: "0.1.4-alpha.6"
+      constraints: 0.1.4-alpha.6
       prereleases: {}
   serviceAccountName: tap-install-sa
   values:
