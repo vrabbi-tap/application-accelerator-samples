@@ -92,4 +92,11 @@ spec:
       not isSafe(vuln)
       msg = sprintf("CVE %s %s %s", [comp.name, vuln.id, ratings])
     }
+---
+apiVersion: secretgen.carvel.dev/v1alpha1
+kind: SecretImport
+metadata:
+  name: prisma-creds
+spec:
+  fromNamespace: tap-install
 #@ end
