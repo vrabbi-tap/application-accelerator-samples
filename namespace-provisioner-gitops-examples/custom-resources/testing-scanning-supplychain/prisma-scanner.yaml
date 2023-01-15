@@ -27,6 +27,7 @@ spec:
 #@ def prisma_values():
 #@   prisma_values = {}
 #@   prisma_values["namespace"] = data.values.name
+#@   prisma_values["prisma"] = {}
 #@   prisma_values["prisma"]["url"] = "https://europe-west3.cloud.twistlock.com/eu-158061"
 #@   prisma_values["prisma"]["basicAuth"]["name"] = "prisma-creds"
 #@   return prisma_values
