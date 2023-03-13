@@ -7,7 +7,8 @@
 #@ def in_attr_list(key, list):
 #@  return hasattr(data.values, key) and (data.values[key] in list)
 #@ end
-#@ if in_list('supply_chain', ['testing_scanning']) and in_list('profile', ['full', 'build']) and in_attr_list('scanner', ['prisma']):
+#@ if in_list('supply_chain', ['testing_scanning']) and in_list('profile', ['full', 'build']):
+#@ if in_attr_list('scanner', ['prisma']):
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
@@ -141,4 +142,96 @@ metadata:
   name: prisma-creds
 spec:
   fromNamespace: tap-install
+#@ end
+#@ if in_attr_list('scanner', ['trivy']):
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: "grype-scanner-trivy"
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/create-strategy: fallback-on-update
+spec:
+  packageRef:
+    refName: trivy.scanning.apps.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.1.4-alpha.7
+      prereleases: {}
+  serviceAccountName: tap-install-sa
+  values:
+  - secretRef:
+      name: #@ "grype-scanner-trivy-" + data.values.name
+
+#@ def trivy_values():
+#@   trivy_values = {}
+#@   trivy_values["namespace"] = data.values.name
+#@   trivy_values["metadataStore"] = {}
+#@   trivy_values["metadataStore"]["caSecret"] = {}
+#@   trivy_values["metadataStore"]["caSecret"]["importFromNamespace"] = ""
+#@   trivy_values["metadataStore"]["authSecret"] = {}
+#@   trivy_values["metadataStore"]["authSecret"]["importFromNamespace"] = ""
+
+#@   return trivy_values
+#@ end
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  #! name will be updated by the expansion template
+  name: "grype-scanner-trivy"
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/create-strategy: fallback-on-update
+stringData:
+  values.yml: #@ yaml.encode(trivy_values())
+---
+apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+kind: ScanPolicy
+metadata:
+   name: trivy-scan-policy
+   labels:
+      app.kubernetes.io/part-of: enable-in-gui
+spec:
+   regoFile: |
+      package main
+
+      import future.keywords.in
+      import future.keywords.every
+
+      # Accepted Values: "critical", "high", "medium", "low", unknown"
+      notAllowedSeverities := ["critical", "high", "unknown"]
+      notAllowedSet := {x | x := notAllowedSeverities[_]}
+      ignoreCves := []
+
+      isSafe(match) {
+        severities := { e | e := match.ratings.rating.severity } | { e | e := match.ratings.rating[_].severity }
+        every severity in severities {
+            not severity in notAllowedSet
+        }
+      }
+
+      isIgnored(match) {
+        match.id in ignoreCves
+      }
+
+      deny[msg] {
+        notAllowedVulnerabilities := { vulnerability |
+          vulnerabilities := {e | e := input.bom.vulnerabilities.vulnerability} | {e | e := input.bom.vulnerabilities.vulnerability[_]}
+          some vulnerability in vulnerabilities
+          not isIgnored(vulnerability)
+          not isSafe(vulnerability)
+        }
+        formattedVulnerabilityMessages := { message |
+          some vulnerability in notAllowedVulnerabilities
+          ratings := {e | e := vulnerability.ratings.rating.severity} | {e | e := vulnerability.ratings.rating[_].severity}
+          formattedRatings := concat(", ", ratings)
+          affectedComponents := {e | e := vulnerability.affects.target.ref} | {e | e := vulnerability.affects.target[_].ref}
+          formattedComponents := concat("\\\n", affectedComponents)
+          message = sprintf("CVE: %s \\\nRatings: %s\\\nAffected Components: \\\n%s", [vulnerability.id, formattedRatings, formattedComponents])
+        }
+        some formattedVulnerabilityMessage in formattedVulnerabilityMessages
+        msg := formattedVulnerabilityMessage
+      }
+#@ end
 #@ end
