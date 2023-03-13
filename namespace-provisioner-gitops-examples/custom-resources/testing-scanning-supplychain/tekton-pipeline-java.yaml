@@ -2,7 +2,11 @@
 #@ def in_list(key, list):
 #@  return hasattr(data.values.tap_values, key) and (data.values.tap_values[key] in list)
 #@ end
-#@ if/end in_list('supply_chain', ['testing', 'testing_scanning']) and in_list('profile', ['full', 'iterate', 'build']):
+#@ def in_attr_list(key, list):
+#@  return hasattr(data.values, key) and (data.values[key] in list)
+#@ end
+#@ if in_list('supply_chain', ['testing', 'testing_scanning']) and in_list('profile', ['full', 'iterate', 'build']):
+#@ if in_attr_list('language', ['java','maven','gradle']):
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
@@ -44,3 +48,5 @@ spec:
                   echo "WARNING: No tests were run. This workload is not built with one of the currently supported frameworks (maven or gradle). If using another language/framework, update the image and the script sections of the 'pipeline.tekton.dev/developer-defined-tekton-pipeline' resource in your namespace to match your language/framework."
                   #exit 1
               fi
+#@ end
+#@ end
