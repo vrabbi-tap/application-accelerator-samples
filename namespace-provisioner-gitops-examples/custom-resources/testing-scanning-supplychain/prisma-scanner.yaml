@@ -4,7 +4,10 @@
 #@ def in_list(key, list):
 #@  return hasattr(data.values.tap_values, key) and (data.values.tap_values[key] in list)
 #@ end
-#@ if in_list('supply_chain', ['testing_scanning']) and in_list('profile', ['full', 'build']):
+#@ def in_attr_list(key, list):
+#@  return hasattr(data.values, key) and (data.values[key] in list)
+#@ end
+#@ if in_list('supply_chain', ['testing_scanning']) and in_list('profile', ['full', 'build']) and in_attr_list('scanner', ['prisma']):
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
