@@ -40,8 +40,7 @@ spec:
               pwd
               echo ">>> Unit-Tests"
               go test ./...
-              if [[ $? -ne 0 ]] 
-              then
+              if [ $? -ne 0 ]; then
                 echo -e "\n\n[RESULT] ----------------------------------------------------------------------"
                 echo -n "Failed Unit-Tests: "
                 exit 1
@@ -50,6 +49,5 @@ spec:
                 echo -n "Passed all Unit-Tests: "
                 exit 0
               fi
-              exit 2
 #@ end
 #@ end
