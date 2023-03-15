@@ -11,7 +11,7 @@ spec:
     - ./components/where-for-dinner-ui/where-for-dinner-ui.yaml
     - ./components/where-for-dinner-search/where-for-dinner-search.yaml
     - ./components/where-for-dinner-search-proc/where-for-dinner-search-proc.yaml
-    #- ./components/where-for-dinner-availability/where-for-dinner-availability.yaml
+    - ./components/where-for-dinner-availability/where-for-dinner-availability.yaml
     - ./components/where-for-dinner-notify/where-for-dinner-notify.yaml
     - ./groups/org.yaml
     - ./systems/where-for-dinner-system.yaml
